@@ -1,16 +1,19 @@
 ### read Data 
 #mainDir <- '/media/metienne_h/Consulting/DFO/2015-YelloweyeSurvey'
 #mainDir <- '/home/metienne/bianca/Consulting/DFO/2015-YelloweyeSurvey/'
-mainDir <- '/home/metienne/Consulting/DFO/2015-YelloweyeSurvey/'
-#mainDir <- '/home/metienne/EnCours/2015-YelloweyeSurvey'
+#mainDir <- '/home/metienne/Consulting/DFO/2015-YelloweyeSurvey/'
+mainDir <- '/home/metienne/EnCours/2015-YelloweyeSurvey'
 dataDir <- 'Data'
 resDir <- 'Results/FOS'
-codeDir <- '2015YellowEye'
+codeDir <- 'DFOYellowEye'
 
 
 nIter <- 10000
 library('rjags')
 library('stringr')
+library('scales')
+library('ggplot2')
+
 source(file.path(mainDir, codeDir,"glmFunction.R"))
 yearBreaks=c(1986,1989 , 1994, 1996, 2002, 2006,2016)
 depthBreaks = c(0, 101, 201, 401, 801 )

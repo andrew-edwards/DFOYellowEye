@@ -1,14 +1,15 @@
 ### read Data 
 #mainDir <- '/media/metienne_h/Consulting/DFO/2015-YelloweyeSurvey'
-mainDir <- '/home/metienne/bianca/Consulting/DFO/2015-YelloweyeSurvey/'
+#mainDir <- '/home/metienne/bianca/Consulting/DFO/2015-YelloweyeSurvey/'
 #mainDir <- '/home/metienne/Consulting/DFO/2015-YelloweyeSurvey/'
-#mainDir <- '/home/metienne/EnCours/2015-YelloweyeSurvey'
+mainDir <- '/home/metienne/EnCours/2015-YelloweyeSurvey'
 dataDir <- 'Data'
 resDir <- 'Results/PHL'
-codeDir <- '2015YellowEye'
+codeDir <- 'DFOYellowEye'
 
 library('rjags')
 library('stringr')
+library('ggplot2')
 source(file.path(mainDir, codeDir,"glmFunction.R"))
 source(file.path(mainDir, codeDir, 'formattingFunction.R'))
 

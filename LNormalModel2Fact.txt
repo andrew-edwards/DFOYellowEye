@@ -1,0 +1,51 @@
+model
+{
+  for( indYear in 1:nYear) 
+  { 
+    ##abundance indices per year
+    logit(pcy[indYear]) <- betay[indYear]  #this generates new probabilites (without the ba term)
+    a.cmu[indYear] <-exp(alphay[indYear])			
+    predccpue[indYear]<-pcy[indYear]*a.cmu[indYear]	
+  }
+  
+for (i in 1: nPres) 
+  {
+    logit(py[i]) <- betay[presYear[i]] + beta1[presFact1[i]] + beta2[presFact2[i]]
+    pres[i] ~ dbin(py[i],presYsets[i])    #occurrences of catches
+  }
+  
+  for (j in 1: nCpue) 
+  {
+    ## Negative binomial model to account for counts and overdispersion
+    ## Parametrising to avoid auto correlation
+    ## a.mu is the expected mean
+    ## r the dispersion parameter
+    ## p  the probability of success
+    ## Y~dnegbin(p,r), E(Y)=r p /(1-p), var(Y) = r p / (1-p)^2
+     la.mu[j]<-alphay[cpueYear[j]] + alpha1[cpueFact1[j]] + alpha2[cpueFact2[j]] 
+     cpue[j] ~ dlnorm( la.mu[j] , a.tau)
+   }
+  
+
+  #PRIORS
+  r ~ dgamma(0.01,0.01)
+   
+  for (indYear in 1:nYear) {
+    betay[indYear] ~ dnorm( 0.0,1.0E-6)
+    alphay[indYear] ~ dnorm( 0.0,1.0E-6)
+  }
+  for (indFact1 in 1:nFact1) {
+    beta1[indFact1] ~ dnorm( 0.0,1.0E-6)
+    alpha1[indFact1] ~ dnorm( 0.0,1.0E-6)
+  }
+  for (indFact2 in 1:nFact2) {
+    beta2[indFact2] ~ dnorm( 0.0,1.0E-6)
+    alpha2[indFact2] ~ dnorm( 0.0,1.0E-6)
+  }
+
+  a.prior~dnorm(0.0,1.0E-6)  
+a.tau~dlnorm(lmu.tau,l.tau)
+lmu.tau<-log(0.5)
+l.tau<-1/(1.2*1.2)
+a.sigma<-sqrt(1/a.tau)
+}

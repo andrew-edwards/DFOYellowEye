@@ -136,21 +136,27 @@ postBetay <- data.frame(index=as.numeric(out.samples$betay),
                         year=rep(YEAR, nIter))
 postPredCPUE <- data.frame(index=as.numeric(out.samples$predccpue), 
                            year=rep(YEAR, nIter))
-summaryCpue <- summary(as.mcmc.list(out.samples$predccpue))[[1]]
-write.csv(summaryCpue , 
-          file=file.path(mainDir, resDir,  paste0(pref,"-Abundance.csv")))
+summaryCpue <- as.data.frame(summary(as.mcmc.list(out.samples$predccpue))[[1]])
+row.names(summaryCpue) <- YEAR
 
-pdf(file.path(mainDir, resDir, paste0(pref ,"-Abundance.pdf")))
-plot(postPredCPUE$index~as.factor(postPredCPUE$year), xlab="Year", ylab="Relative Abundance")
-dev.off()
+write.csv(summaryCpue,
+          file=file.path(mainDir, resDir,  paste0(pref,"-Abundance.csv")), row.names=as.factor(YEAR))
+
+p <- ggplot(postPredCPUE, aes(x=year, y=index))
+p <- p + geom_boxplot() + scale_y_continuous(label=scientific)
+p
+ggsave(plot = p, filename = file.path(mainDir, resDir, paste0(pref ,"-Abundance.pdf")), width = 20, height =15, units = "cm", dpi = 300)
 
 lapply(YEAR, function(y){
-  pdf(file.path(fig.path, paste0(pref ,"-History-beta-",y,".pdf")))
-  plot(1:nIter,postBetay[postBetay$year==y,1],"l", xlab="iterations", ylab="Year effect", main=y)
-  dev.off()
-  pdf(file.path(fig.path, paste0(pref ,"-History-cpue-",y,".pdf")))
-    plot(1:nIter,postPredCPUE[postPredCPUE$year==y,1],"l", xlab="iterations", ylab="Relative Abundance Index", main=y)
-  dev.off()
+  df <- data.frame(betay=postBetay[postBetay$year==y,1], x=1:nIter)
+  p <- qplot(x,betay, data = df, geom="line")
+  ggsave(plot = p, filename = file.path(mainDir, resDir, paste0(pref ,"-History-beta-",y,".pdf")), width = 20, height =15, units = "cm", dpi = 300)
+  
+  
+  df <- data.frame(Abundance=postPredCPUE[postPredCPUE$year==y,1], x=1:nIter)
+  p <- qplot(x,Abundance, data = df, geom="line")
+  ggsave(plot = p, filename = file.path(mainDir, resDir, paste0(pref ,"-History-cpue-",y,".pdf")), width = 20, height =15, units = "cm", dpi = 300)
+        
 })
 return(summaryCpue)
 }
